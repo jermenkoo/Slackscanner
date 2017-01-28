@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Flights we look for (NSA)</title>
+  </head>
+  <body>
+    <h1>Flights we look for (NSA)</h1>
+    <p>
+      This application demonstrates how easy it is not to trust 3rd party things. Who would say your searches are being logged?
+      View source or see <a href="https://github.com/pusher/pusher-platform-js">the repository</a> for more info.
+    </p>
+
+    <ol id="feed_items">
+    </ol>
+
+    <ol id="page_items">
+    </ol>
+
+
+    <!-- change this URL to "./target/pusher-platform.js" for the built version in the repo -->
+    <script src="https://js.pusher.com/platform/latest/pusher-platform.js"></script>
+    <script src="https://js.pusher.com/platform/latest/pusher-platform-secret-authorizer.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+      var app = new PusherPlatform.App({
+        appId: 'cd8cd55a-1363-4605-bd0f-8cc1a8253b9d',
+      });
+      var notificationsFeed = app.feed("skyscanner");
+      notificationsFeed.subscribe({
+        lastEventId: "0",
+        onOpen: () => {
+          console.log("Subscription opened");
+        },
+        onItem: (item) => {
+          var itemEl = document.createElement("li");
+          itemEl.innerText = JSON.stringify(item);
+          document.getElementById("page_items").appendChild(itemEl);
+        },
+        onError: (err) => {
+          console.error("Error subscribing to notifications:", err);
+        }
+      });
+
+      // refresh every 10 seconds
+      $(document).ready(
+          function() {
+              setInterval(function() {
+                  document.getElementById("page_items").innerText = "";
+                  notificationsFeed.get({
+                    limit: 5
+                  }).then((response) => {
+                    console.log("Got page", response);
+                    for (var i = 0; i < response.items.length; i++) {
+                      var item = response.items[i];
+                      var itemEl = document.createElement("li");
+                      itemEl.innerText = JSON.stringify(item);
+                      document.getElementById("page_items").appendChild(itemEl);
+                    }
+                  })
+                  .catch((error) => { console.error("Could not get page:", error); });
+              }, 10000)
+          }
+      )
+    </script>
+  </body>
+</html>
