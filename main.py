@@ -92,7 +92,7 @@ def get_flight_information(everything, out=None, inn=None):
     outbound = get_leg_information(everything, out)
     inbound = get_leg_information(everything, inn)
 
-    return "\tOutbound: " + outbound + "\n" + "\tInbound: " + inbound + "\n"
+    return "\t*Outbound:* " + outbound + "\n" + "\t*Inbound:* " + inbound + "\n"
 
 
 @app.route('/hello', methods=['POST'])
@@ -134,7 +134,7 @@ def hello():
         data=str(
             {
                 'response_type': 'in_channel',
-                'text': 'Flights found from: *{}* to: *{}*:\n'.format(code1, code2) + res
+                'text': 'Flights found from: *{}* to: *{}*:\n'.format(code1, code2) + res + "\nTotal price: *{} GBP*".format(round(my_flight['PricingOptions'][0]['Price'], 2))
             },
         ),
         verify=False
